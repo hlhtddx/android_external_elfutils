@@ -205,61 +205,34 @@ LOCAL_C_INCLUDES:=$(LOCAL_PATH)/lib/ $(LOCAL_PATH)/libelf/ $(LOCAL_PATH)/libebl/
 include $(BUILD_HOST_STATIC_LIBRARY)
 
 #
-# libebl_arm
+# libebl_$(TARGET_ARCH)
 #
 
 include $(CLEAR_VARS)
 
-#LOCAL_SRC_FILES:=$(COMMON_SOURCES)
+LOCAL_CFLAGS += -include $(LOCAL_PATH)/config.h
+ifeq ($(HOST_OS),windows)
+LOCAL_CFLAGS += -Doff64_t=_off64_t
+else
+LOCAL_CFLAGS += -Doff64_t=__off64_t
+endif
+
+LOCAL_C_INCLUDES:=$(LOCAL_PATH)/lib/ $(LOCAL_PATH)/libelf/ $(LOCAL_PATH)/libebl/
+
+ifeq ($(TARGET_ARCH),arm)
 LOCAL_SRC_FILES+=\
         libebl/arm_destr.c \
         libebl/arm_init.c \
         libebl/arm_symbol.c
-
-ifeq ($(HOST_OS),linux)
-endif
-ifeq ($(HOST_OS),darwin)
-endif
-
 LOCAL_MODULE:=libebl_arm
-
-LOCAL_CFLAGS += -include $(LOCAL_PATH)/config.h
-ifeq ($(HOST_OS),windows)
-LOCAL_CFLAGS += -Doff64_t=_off64_t
-else
-LOCAL_CFLAGS += -Doff64_t=__off64_t
+include $(BUILD_HOST_STATIC_LIBRARY)
 endif
 
-LOCAL_C_INCLUDES:=$(LOCAL_PATH)/lib/ $(LOCAL_PATH)/libelf/ $(LOCAL_PATH)/libebl/
-
-include $(BUILD_HOST_STATIC_LIBRARY)
-
-
-#
-# libebl_sh
-#
-
-include $(CLEAR_VARS)
-
+ifeq ($(TARGET_ARCH),mips)
 LOCAL_SRC_FILES+=\
-        libebl/sh_destr.c \
-        libebl/sh_init.c \
-        libebl/sh_symbol.c
-
-ifeq ($(HOST_OS),linux)
-endif
-ifeq ($(HOST_OS),darwin)
-endif
-
-LOCAL_MODULE:=libebl_sh
-
-LOCAL_CFLAGS += -include $(LOCAL_PATH)/config.h
-ifeq ($(HOST_OS),windows)
-LOCAL_CFLAGS += -Doff64_t=_off64_t
-else
-LOCAL_CFLAGS += -Doff64_t=__off64_t
-endif
-
-LOCAL_C_INCLUDES:=$(LOCAL_PATH)/lib/ $(LOCAL_PATH)/libelf/ $(LOCAL_PATH)/libebl/
-
+        libebl/mips_destr.c \
+        libebl/mips_init.c \
+        libebl/mips_symbol.c
+LOCAL_MODULE:=libebl_mips
 include $(BUILD_HOST_STATIC_LIBRARY)
+endif
