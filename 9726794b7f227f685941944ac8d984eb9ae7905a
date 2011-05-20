@@ -1,0 +1,10 @@
+Change-Id: I83bd8b198d121aaa296a135abbc62a9574738795
+Code-Review+2: David Turner <digit@android.com>
+Verified+1: David Turner <digit@android.com>
+Code-Review+1: Jean-Baptiste Queru <jbq@google.com>
+Verified+1: Jean-Baptiste Queru <jbq@google.com>
+Submitted-by: Jean-Baptiste Queru <jbq@google.com>
+Submitted-at: Wed, 02 Sep 2009 09:51:16 -0700
+Reviewed-on: https://review.source.android.com/10544
+Project: platform/external/elfutils
+Branch: refs/heads/master

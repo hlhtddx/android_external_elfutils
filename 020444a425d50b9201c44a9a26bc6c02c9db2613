@@ -1,0 +1,8 @@
+Change-Id: I020444a425d50b9201c44a9a26bc6c02c9db2613
+Code-Review+2: Jean-Baptiste Queru <jbq@google.com>
+Verified+1: Jean-Baptiste Queru <jbq@google.com>
+Submitted-by: Jean-Baptiste Queru <jbq@google.com>
+Submitted-at: Wed, 18 Mar 2009 17:56:55 -0700
+Reviewed-on: https://review.source.android.com/9259
+Project: platform/external/elfutils
+Branch: refs/heads/master
