@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAGfH///34\u003d",
+        "filename": "Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 1003284
+      },
+      "writtenOn": "2012-06-11T21:34:43Z",
+      "side": 1,
+      "message": "I think this should be ($(TARGET_ARCH),x86), but it would probably be better to drop this whole ifeq clause completely.",
+      "revId": "fdb29a7ea8f123b979d4d31e71db92c5cc4f9753",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
