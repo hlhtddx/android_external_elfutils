@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAGe3///xg\u003d",
+        "filename": "Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-06-11T19:58:13Z",
+      "side": 1,
+      "message": "Before this change, libebl_arm (and libebl_sh) were unconditionally built for all target architectures, including x86.  There is no libebl_x86.\n\nAfter this change, libebl_arm is built only for arm targets, and libebl_mips only for mips targets.  But the x86 build now fails, from executing the \n\ninclude $(BUILD_HOST_STATIC_LIBRARY)\n\nmacro without defining LOCAL_MODULE or LOCAL_SRC_FILES.",
+      "revId": "5affcc6940bc1ac23966c2e311c5eed1140cc406",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
