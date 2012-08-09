@@ -116,6 +116,22 @@ dwfl_report_begin_add (Dwfl *dwfl __attribute__ ((unused)))
 }
 INTDEF (dwfl_report_begin_add)
 
+static inline
+Dwfl_Module *use (Dwfl *dwfl, Dwfl_Module **tailp, Dwfl_Module *mod)
+{
+  mod->next = *tailp;
+  *tailp = mod;
+
+  if (unlikely (dwfl->lookup_module != NULL))
+    {
+      free (dwfl->lookup_module);
+      dwfl->lookup_module = NULL;
+    }
+
+  return mod;
+}
+
+
 void
 dwfl_report_begin (Dwfl *dwfl)
 {
@@ -138,20 +154,6 @@ dwfl_report_module (Dwfl *dwfl, const char *name,
 {
   Dwfl_Module **tailp = &dwfl->modulelist, **prevp = tailp;
 
-  inline Dwfl_Module *use (Dwfl_Module *mod)
-  {
-    mod->next = *tailp;
-    *tailp = mod;
-
-    if (unlikely (dwfl->lookup_module != NULL))
-      {
-	free (dwfl->lookup_module);
-	dwfl->lookup_module = NULL;
-      }
-
-    return mod;
-  }
-
   for (Dwfl_Module *m = *prevp; m != NULL; m = *(prevp = &m->next))
     {
       if (m->low_addr == start && m->high_addr == end
@@ -161,7 +163,7 @@ dwfl_report_module (Dwfl *dwfl, const char *name,
 	     after the last module already reported.  */
 	  *prevp = m->next;
 	  m->gc = false;
-	  return use (m);
+	  return use (dwfl, tailp, m);
 	}
 
       if (! m->gc)
@@ -185,7 +187,7 @@ dwfl_report_module (Dwfl *dwfl, const char *name,
   mod->high_addr = end;
   mod->dwfl = dwfl;
 
-  return use (mod);
+  return use (dwfl, tailp, mod);
 }
 INTDEF (dwfl_report_module)
 

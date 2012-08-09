@@ -279,6 +279,153 @@ resolve_symbol (Dwfl_Module *referer, struct reloc_symtab_cache *symtab,
   return DWFL_E_RELUNDEF;
 }
 
+  /* Apply one relocation.  Returns true for any invalid data.  */
+static Dwfl_Error
+relocate (Dwfl_Module *mod, Elf *relocated, const GElf_Ehdr *ehdr,
+          struct reloc_symtab_cache *reloc_symtab, Elf_Data *tdata,
+          GElf_Addr offset, const GElf_Sxword *addend,
+	  int rtype, int symndx)
+{
+  /* First see if this is a reloc we can handle.
+     If we are skipping it, don't bother resolving the symbol.  */
+  Elf_Type type = ebl_reloc_simple_type (mod->ebl, rtype);
+  if (unlikely (type == ELF_T_NUM))
+    return DWFL_E_BADRELTYPE;
+
+  /* First, resolve the symbol to an absolute value.  */
+  GElf_Addr value;
+
+  if (symndx == STN_UNDEF)
+    /* When strip removes a section symbol referring to a
+	 section moved into the debuginfo file, it replaces
+	 that symbol index in relocs with STN_UNDEF.  We
+	 don't actually need the symbol, because those relocs
+	 are always references relative to the nonallocated
+	 debugging sections, which start at zero.  */
+    value = 0;
+  else
+    {
+	GElf_Sym sym;
+	GElf_Word shndx;
+	Dwfl_Error error = relocate_getsym (mod, relocated, reloc_symtab,
+					    symndx, &sym, &shndx);
+	if (unlikely (error != DWFL_E_NOERROR))
+	  return error;
+
+	if (shndx == SHN_UNDEF || shndx == SHN_COMMON)
+	  {
+	    /* Maybe we can figure it out anyway.  */
+	    error = resolve_symbol (mod, reloc_symtab, &sym, shndx);
+	    if (error != DWFL_E_NOERROR)
+	      return error;
+	  }
+
+	value = sym.st_value;
+    }
+
+  /* These are the types we can relocate.  */
+#define TYPES		DO_TYPE (BYTE, Byte); DO_TYPE (HALF, Half);	\
+  DO_TYPE (WORD, Word); DO_TYPE (SWORD, Sword);			\
+  DO_TYPE (XWORD, Xword); DO_TYPE (SXWORD, Sxword)
+  size_t size;
+  switch (type)
+    {
+#define DO_TYPE(NAME, Name)			\
+	case ELF_T_##NAME:			\
+	  size = sizeof (GElf_##Name);		\
+	break
+	TYPES;
+#undef DO_TYPE
+    default:
+	return DWFL_E_BADRELTYPE;
+    }
+
+  if (offset + size > tdata->d_size)
+    return DWFL_E_BADRELOFF;
+
+#define DO_TYPE(NAME, Name) GElf_##Name Name;
+  union { TYPES; } tmpbuf;
+#undef DO_TYPE
+  Elf_Data tmpdata =
+    {
+	.d_type = type,
+	.d_buf = &tmpbuf,
+	.d_size = size,
+	.d_version = EV_CURRENT,
+    };
+  Elf_Data rdata =
+    {
+	.d_type = type,
+	.d_buf = tdata->d_buf + offset,
+	.d_size = size,
+	.d_version = EV_CURRENT,
+    };
+
+  /* XXX check for overflow? */
+  if (addend)
+    {
+	/* For the addend form, we have the value already.  */
+	value += *addend;
+	switch (type)
+	  {
+#define DO_TYPE(NAME, Name)			\
+	    case ELF_T_##NAME:			\
+	      tmpbuf.Name = value;		\
+	    break
+	    TYPES;
+#undef DO_TYPE
+	  default:
+	    abort ();
+	  }
+    }
+  else
+    {
+	/* Extract the original value and apply the reloc.  */
+	Elf_Data *d = gelf_xlatetom (relocated, &tmpdata, &rdata,
+				     ehdr->e_ident[EI_DATA]);
+	if (d == NULL)
+	  return DWFL_E_LIBELF;
+	assert (d == &tmpdata);
+	switch (type)
+	  {
+#define DO_TYPE(NAME, Name)				\
+	    case ELF_T_##NAME:				\
+	      tmpbuf.Name += (GElf_##Name) value;	\
+	    break
+	    TYPES;
+#undef DO_TYPE
+	  default:
+	    abort ();
+	  }
+    }
+
+  /* Now convert the relocated datum back to the target
+     format.  This will write into rdata.d_buf, which
+     points into the raw section data being relocated.  */
+  Elf_Data *s = gelf_xlatetof (relocated, &rdata, &tmpdata,
+				 ehdr->e_ident[EI_DATA]);
+  if (s == NULL)
+    return DWFL_E_LIBELF;
+  assert (s == &rdata);
+
+  /* We have applied this relocation!  */
+  return DWFL_E_NOERROR;
+}
+
+#define check_badreltype()  \
+    do \
+        { \
+        if (first_badreltype) \
+            { \
+            first_badreltype = false; \
+            if (ebl_get_elfmachine (mod->ebl) == EM_NONE) \
+                /* This might be because ebl_openbackend failed to find
+                   any libebl_CPU.so library.  Diagnose that clearly. */ \
+                result = DWFL_E_UNKNOWN_MACHINE; \
+            } \
+        } \
+    while (0)
+
 static Dwfl_Error
 relocate_section (Dwfl_Module *mod, Elf *relocated, const GElf_Ehdr *ehdr,
 		  size_t shstrndx, struct reloc_symtab_cache *reloc_symtab,
@@ -302,136 +449,6 @@ relocate_section (Dwfl_Module *mod, Elf *relocated, const GElf_Ehdr *ehdr,
   if (tdata == NULL)
     return DWFL_E_LIBELF;
 
-  /* Apply one relocation.  Returns true for any invalid data.  */
-  Dwfl_Error relocate (GElf_Addr offset, const GElf_Sxword *addend,
-		       int rtype, int symndx)
-  {
-    /* First see if this is a reloc we can handle.
-       If we are skipping it, don't bother resolving the symbol.  */
-    Elf_Type type = ebl_reloc_simple_type (mod->ebl, rtype);
-    if (unlikely (type == ELF_T_NUM))
-      return DWFL_E_BADRELTYPE;
-
-    /* First, resolve the symbol to an absolute value.  */
-    GElf_Addr value;
-
-    if (symndx == STN_UNDEF)
-      /* When strip removes a section symbol referring to a
-	 section moved into the debuginfo file, it replaces
-	 that symbol index in relocs with STN_UNDEF.  We
-	 don't actually need the symbol, because those relocs
-	 are always references relative to the nonallocated
-	 debugging sections, which start at zero.  */
-      value = 0;
-    else
-      {
-	GElf_Sym sym;
-	GElf_Word shndx;
-	Dwfl_Error error = relocate_getsym (mod, relocated, reloc_symtab,
-					    symndx, &sym, &shndx);
-	if (unlikely (error != DWFL_E_NOERROR))
-	  return error;
-
-	if (shndx == SHN_UNDEF || shndx == SHN_COMMON)
-	  {
-	    /* Maybe we can figure it out anyway.  */
-	    error = resolve_symbol (mod, reloc_symtab, &sym, shndx);
-	    if (error != DWFL_E_NOERROR)
-	      return error;
-	  }
-
-	value = sym.st_value;
-      }
-
-    /* These are the types we can relocate.  */
-#define TYPES		DO_TYPE (BYTE, Byte); DO_TYPE (HALF, Half);	\
-    DO_TYPE (WORD, Word); DO_TYPE (SWORD, Sword);			\
-    DO_TYPE (XWORD, Xword); DO_TYPE (SXWORD, Sxword)
-    size_t size;
-    switch (type)
-      {
-#define DO_TYPE(NAME, Name)			\
-	case ELF_T_##NAME:			\
-	  size = sizeof (GElf_##Name);		\
-	break
-	TYPES;
-#undef DO_TYPE
-      default:
-	return DWFL_E_BADRELTYPE;
-      }
-
-    if (offset + size > tdata->d_size)
-      return DWFL_E_BADRELOFF;
-
-#define DO_TYPE(NAME, Name) GElf_##Name Name;
-    union { TYPES; } tmpbuf;
-#undef DO_TYPE
-    Elf_Data tmpdata =
-      {
-	.d_type = type,
-	.d_buf = &tmpbuf,
-	.d_size = size,
-	.d_version = EV_CURRENT,
-      };
-    Elf_Data rdata =
-      {
-	.d_type = type,
-	.d_buf = tdata->d_buf + offset,
-	.d_size = size,
-	.d_version = EV_CURRENT,
-      };
-
-    /* XXX check for overflow? */
-    if (addend)
-      {
-	/* For the addend form, we have the value already.  */
-	value += *addend;
-	switch (type)
-	  {
-#define DO_TYPE(NAME, Name)			\
-	    case ELF_T_##NAME:			\
-	      tmpbuf.Name = value;		\
-	    break
-	    TYPES;
-#undef DO_TYPE
-	  default:
-	    abort ();
-	  }
-      }
-    else
-      {
-	/* Extract the original value and apply the reloc.  */
-	Elf_Data *d = gelf_xlatetom (relocated, &tmpdata, &rdata,
-				     ehdr->e_ident[EI_DATA]);
-	if (d == NULL)
-	  return DWFL_E_LIBELF;
-	assert (d == &tmpdata);
-	switch (type)
-	  {
-#define DO_TYPE(NAME, Name)				\
-	    case ELF_T_##NAME:				\
-	      tmpbuf.Name += (GElf_##Name) value;	\
-	    break
-	    TYPES;
-#undef DO_TYPE
-	  default:
-	    abort ();
-	  }
-      }
-
-    /* Now convert the relocated datum back to the target
-       format.  This will write into rdata.d_buf, which
-       points into the raw section data being relocated.  */
-    Elf_Data *s = gelf_xlatetof (relocated, &rdata, &tmpdata,
-				 ehdr->e_ident[EI_DATA]);
-    if (s == NULL)
-      return DWFL_E_LIBELF;
-    assert (s == &rdata);
-
-    /* We have applied this relocation!  */
-    return DWFL_E_NOERROR;
-  }
-
   /* Fetch the relocation section and apply each reloc in it.  */
   Elf_Data *reldata = elf_getdata (scn, NULL);
   if (reldata == NULL)
@@ -439,17 +456,6 @@ relocate_section (Dwfl_Module *mod, Elf *relocated, const GElf_Ehdr *ehdr,
 
   Dwfl_Error result = DWFL_E_NOERROR;
   bool first_badreltype = true;
-  inline void check_badreltype (void)
-  {
-    if (first_badreltype)
-      {
-	first_badreltype = false;
-	if (ebl_get_elfmachine (mod->ebl) == EM_NONE)
-	  /* This might be because ebl_openbackend failed to find
-	     any libebl_CPU.so library.  Diagnose that clearly.  */
-	  result = DWFL_E_UNKNOWN_MACHINE;
-      }
-  }
 
   size_t nrels = shdr->sh_size / shdr->sh_entsize;
   size_t complete = 0;
@@ -459,7 +465,8 @@ relocate_section (Dwfl_Module *mod, Elf *relocated, const GElf_Ehdr *ehdr,
 	GElf_Rel rel_mem, *r = gelf_getrel (reldata, relidx, &rel_mem);
 	if (r == NULL)
 	  return DWFL_E_LIBELF;
-	result = relocate (r->r_offset, NULL,
+	result = relocate (mod, relocated, ehdr, reloc_symtab, tdata,
+                           r->r_offset, NULL,
 			   GELF_R_TYPE (r->r_info),
 			   GELF_R_SYM (r->r_info));
 	check_badreltype ();
@@ -488,7 +495,8 @@ relocate_section (Dwfl_Module *mod, Elf *relocated, const GElf_Ehdr *ehdr,
 					       &rela_mem);
 	if (r == NULL)
 	  return DWFL_E_LIBELF;
-	result = relocate (r->r_offset, &r->r_addend,
+	result = relocate (mod, relocated, ehdr, reloc_symtab, tdata,
+                           r->r_offset, &r->r_addend,
 			   GELF_R_TYPE (r->r_info),
 			   GELF_R_SYM (r->r_info));
 	check_badreltype ();

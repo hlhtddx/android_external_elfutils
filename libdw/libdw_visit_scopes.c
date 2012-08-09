@@ -109,11 +109,8 @@ __libdw_visit_scopes (depth, root, previsit, postvisit, arg)
   if (INTUSE(dwarf_child) (&root->die, &child.die) != 0)
     return -1;
 
-  inline int recurse (void)
-    {
-      return __libdw_visit_scopes (depth + 1, &child,
-				   previsit, postvisit, arg);
-    }
+#define recurse() \
+      __libdw_visit_scopes (depth + 1, &child, previsit, postvisit, arg)
 
   do
     {
