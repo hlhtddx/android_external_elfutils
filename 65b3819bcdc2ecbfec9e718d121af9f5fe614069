@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bea77522_205cf0b2",
+        "filename": "0.153/bionic-fixup/AndroidFixup.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-11-22T07:13:48Z",
+      "side": 1,
+      "message": "why do you need this? that\u0027s where basename is supposed to be.",
+      "revId": "65b3819bcdc2ecbfec9e718d121af9f5fe614069",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bea77522_80696457",
+        "filename": "0.153/bionic-fixup/AndroidFixup.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-11-22T07:13:48Z",
+      "side": 1,
+      "message": "yeah, we need _FILE_OFFSET_BITS.",
+      "revId": "65b3819bcdc2ecbfec9e718d121af9f5fe614069",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bea77522_6066f884",
+        "filename": "0.153/bionic-fixup/AndroidFixup.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-11-22T07:13:48Z",
+      "side": 1,
+      "message": "can you raise a bug for MIN and MAX? that\u0027s a bug.",
+      "revId": "65b3819bcdc2ecbfec9e718d121af9f5fe614069",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bea77522_c031ac75",
+        "filename": "0.153/bionic-fixup/AndroidFixup.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-11-22T07:13:48Z",
+      "side": 1,
+      "message": "may as well stick powerof2 in the same bug.",
+      "revId": "65b3819bcdc2ecbfec9e718d121af9f5fe614069",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ed03988_42c7764e",
+        "filename": "0.153/bionic-fixup/AndroidFixup.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-11-22T07:13:48Z",
+      "side": 1,
+      "message": "oops. that\u0027s a bug too. can you file one?",
+      "revId": "65b3819bcdc2ecbfec9e718d121af9f5fe614069",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "deaa69eb_d36183eb",
+        "filename": "0.153/bionic-fixup/AndroidFixup.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-11-22T07:13:48Z",
+      "side": 1,
+      "message": "this is in POSIX-2008. we should have this too.",
+      "revId": "65b3819bcdc2ecbfec9e718d121af9f5fe614069",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ed03988_c299a66a",
+        "filename": "0.153/bionic-fixup/argp.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-11-22T07:13:48Z",
+      "side": 1,
+      "message": "they include \u003cargp.h\u003e and then don\u0027t use it?",
+      "revId": "65b3819bcdc2ecbfec9e718d121af9f5fe614069",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bea77522_002c5417",
+        "filename": "0.153/bionic-fixup/error.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-11-22T07:13:48Z",
+      "side": 1,
+      "message": "huh. we have the BSD equivalents, but we don\u0027t have the GNU error.h stuff. seems like a reasonable feature request, though. can you file a bug?",
+      "revId": "65b3819bcdc2ecbfec9e718d121af9f5fe614069",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ed03988_a29e324e",
+        "filename": "0.153/bionic-fixup/libintl.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-11-22T07:13:48Z",
+      "side": 1,
+      "message": "shouldn\u0027t you put your dummy gettext and dgettext in here instead?",
+      "revId": "65b3819bcdc2ecbfec9e718d121af9f5fe614069",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bea77522_40465cdb",
+        "filename": "0.153/bionic-fixup/stdio_ext.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-11-22T07:13:48Z",
+      "side": 1,
+      "message": "they include this and then don\u0027t use it?",
+      "revId": "65b3819bcdc2ecbfec9e718d121af9f5fe614069",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
