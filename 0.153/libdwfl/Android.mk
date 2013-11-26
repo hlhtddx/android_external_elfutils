@@ -14,7 +14,7 @@
 
 LOCAL_PATH := $(call my-dir)
 
-supported_platforms := linux-x86
+supported_platforms := linux-x86 darwin-x86
 cur_platform := $(filter $(HOST_OS)-$(HOST_ARCH),$(supported_platforms))
 
 ifdef cur_platform
@@ -50,7 +50,6 @@ LOCAL_SRC_FILES := $(LIBDWFL_SRC_FILES) \
 	dwfl_addrdwarf.c \
 	dwfl_addrmodule.c \
 	dwfl_module_report_build_id.c \
-	linux-kernel-modules.c \
 	segment.c
 
 LOCAL_C_INCLUDES := \
