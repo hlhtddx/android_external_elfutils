@@ -87,7 +87,7 @@ LOCAL_CFLAGS += -DHAVE_CONFIG_H -std=gnu99 -D_GNU_SOURCE
 
 LOCAL_CFLAGS += -include $(LOCAL_PATH)/../host-$(HOST_OS)-fixup/AndroidFixup.h
 
-LOCAL_MODULE:= libebl
+LOCAL_MODULE:= libebl_host
 
 include $(BUILD_HOST_STATIC_LIBRARY)
 

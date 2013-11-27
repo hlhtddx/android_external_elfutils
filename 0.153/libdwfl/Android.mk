@@ -75,7 +75,7 @@ endif
 # to fix machine-dependent issues
 LOCAL_CFLAGS += -include $(LOCAL_PATH)/../host-$(HOST_OS)-fixup/AndroidFixup.h
 
-LOCAL_MODULE:= libdwfl
+LOCAL_MODULE:= libdwfl_host
 
 include $(BUILD_HOST_STATIC_LIBRARY)
 

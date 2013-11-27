@@ -149,7 +149,7 @@ LOCAL_CFLAGS += -include $(LOCAL_PATH)/../host-$(HOST_OS)-fixup/AndroidFixup.h
 # to suppress the "pointer of type ‘void *’ used in arithmetic" warning
 LOCAL_CFLAGS += -Wno-pointer-arith
 
-LOCAL_MODULE:= libdw
+LOCAL_MODULE:= libdw_host
 
 include $(BUILD_HOST_STATIC_LIBRARY)
 
