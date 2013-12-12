@@ -180,6 +180,9 @@ LOCAL_MODULE_TAGS := eng
 
 LOCAL_MODULE:= libdw
 
+# Workaround for clang bug 18201
+LOCAL_CFLAGS += -g0
+
 include $(BUILD_STATIC_LIBRARY)
 
 endif #cur_platform

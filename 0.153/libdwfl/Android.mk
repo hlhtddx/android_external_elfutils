@@ -100,6 +100,9 @@ LOCAL_CFLAGS += -DHAVE_CONFIG_H -std=gnu99 -Werror
 # to suppress the "pointer of type ‘void *’ used in arithmetic" warning
 LOCAL_CFLAGS += -Wno-pointer-arith
 
+# Workaround for clang bug http://llvm.org/bugs/show_bug.cgi?id=18201
+LOCAL_CFLAGS += -g0
+
 LOCAL_MODULE:= libdwfl
 
 include $(BUILD_STATIC_LIBRARY)
