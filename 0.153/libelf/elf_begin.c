@@ -1001,6 +1001,19 @@ write_file (int fd, Elf_Cmd cmd)
   return result;
 }
 
+  Elf *lock_dup_elf (int fildes, Elf_Cmd cmd, Elf *ref)
+  {
+    /* We need wrlock to dup an archive.  */
+    if (ref->kind == ELF_K_AR)
+      {
+	rwlock_unlock (ref->lock);
+	rwlock_wrlock (ref->lock);
+      }
+
+    /* Duplicate the descriptor.  */
+    return dup_elf (fildes, cmd, ref);
+  }
+
 
 /* Return a descriptor for the file belonging to FILDES.  */
 Elf *
@@ -1028,19 +1041,6 @@ elf_begin (fildes, cmd, ref)
       return NULL;
     }
 
-  Elf *lock_dup_elf ()
-  {
-    /* We need wrlock to dup an archive.  */
-    if (ref->kind == ELF_K_AR)
-      {
-	rwlock_unlock (ref->lock);
-	rwlock_wrlock (ref->lock);
-      }
-
-    /* Duplicate the descriptor.  */
-    return dup_elf (fildes, cmd, ref);
-  }
-
   switch (cmd)
     {
     case ELF_C_NULL:
@@ -1061,7 +1061,7 @@ elf_begin (fildes, cmd, ref)
     case ELF_C_READ:
     case ELF_C_READ_MMAP:
       if (ref != NULL)
-	retval = lock_dup_elf ();
+	retval = lock_dup_elf (fildes, cmd, ref);
       else
 	/* Create descriptor for existing file.  */
 	retval = read_file (fildes, 0, ~((size_t) 0), cmd, NULL);
@@ -1082,7 +1082,7 @@ elf_begin (fildes, cmd, ref)
 	      retval = NULL;
 	    }
 	  else
-	    retval = lock_dup_elf ();
+	    retval = lock_dup_elf (fildes, cmd, ref);
 	}
       else
 	/* Create descriptor for existing file.  */

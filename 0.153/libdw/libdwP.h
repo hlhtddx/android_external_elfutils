@@ -401,7 +401,7 @@ extern struct Dwarf_CU *__libdw_intern_next_unit (Dwarf *dbg, bool debug_types)
      __nonnull_attribute__ (1) internal_function;
 
 /* Find CU for given offset.  */
-extern struct Dwarf_CU *__libdw_findcu (Dwarf *dbg, Dwarf_Off offset, bool tu)
+struct Dwarf_CU *__libdw_findcu (Dwarf *dbg, Dwarf_Off start, bool debug_types)
      __nonnull_attribute__ (1) internal_function;
 
 /* Return tag of given DIE.  */

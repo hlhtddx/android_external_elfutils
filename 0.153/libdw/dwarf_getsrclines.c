@@ -86,6 +86,52 @@ compare_lines (const void *a, const void *b)
   return (*p1)->addr - (*p2)->addr;
 }
 
+      /* Apply the "operation advance" from a special opcode
+	 or DW_LNS_advance_pc (as per DWARF4 6.2.5.1).  */
+      static inline void advance_pc (Dwarf_Word *addr, uint_fast8_t minimum_instr_len, unsigned int *op_index, uint_fast8_t max_ops_per_instr, unsigned int op_advance)
+      {
+	*addr += minimum_instr_len * ((*op_index + op_advance)
+				     / max_ops_per_instr);
+	*op_index = (*op_index + op_advance) % max_ops_per_instr;
+      }
+
+      static inline bool add_new_line (struct linelist **linelist, unsigned int *nlinelist, Dwarf_Word addr, unsigned int op_index, unsigned int file, int line, unsigned int column, uint_fast8_t is_stmt, bool basic_block, bool prologue_end, bool epilogue_begin, unsigned int isa, unsigned int discriminator, struct linelist *new_line, bool end_sequence)
+      {
+	/* Set the line information.  For some fields we use bitfields,
+	   so we would lose information if the encoded values are too large.
+	   Check just for paranoia, and call the data "invalid" if it
+	   violates our assumptions on reasonable limits for the values.  */
+#define SET(field)							      \
+	do {								      \
+	  new_line->line.field = field;					      \
+	  if (unlikely (new_line->line.field != field))			      \
+	    return true;						      \
+        } while (0)
+
+	SET (addr);
+	SET (op_index);
+	SET (file);
+	SET (line);
+	SET (column);
+	SET (is_stmt);
+	SET (basic_block);
+	SET (end_sequence);
+	SET (prologue_end);
+	SET (epilogue_begin);
+	SET (isa);
+	SET (discriminator);
+
+#undef SET
+
+	new_line->next = *linelist;
+	*linelist = new_line;
+	++(*nlinelist);
+
+	return false;
+      }
+
+
+
 int
 dwarf_getsrclines (Dwarf_Die *cudie, Dwarf_Lines **lines, size_t *nlines)
 {
@@ -335,15 +381,6 @@ dwarf_getsrclines (Dwarf_Die *cudie, Dwarf_Lines **lines, size_t *nlines)
       unsigned int isa = 0;
       unsigned int discriminator = 0;
 
-      /* Apply the "operation advance" from a special opcode
-	 or DW_LNS_advance_pc (as per DWARF4 6.2.5.1).  */
-      inline void advance_pc (unsigned int op_advance)
-      {
-	addr += minimum_instr_len * ((op_index + op_advance)
-				     / max_ops_per_instr);
-	op_index = (op_index + op_advance) % max_ops_per_instr;
-      }
-
       /* Process the instructions.  */
       struct linelist *linelist = NULL;
       unsigned int nlinelist = 0;
@@ -352,45 +389,10 @@ dwarf_getsrclines (Dwarf_Die *cudie, Dwarf_Lines **lines, size_t *nlines)
 	 We cannot simply define a function because we want to use alloca.  */
 #define NEW_LINE(end_seq)						\
       do {								\
-	if (unlikely (add_new_line (alloca (sizeof (struct linelist)),	\
+	if (unlikely (add_new_line (&linelist, &nlinelist, addr, op_index, file, line, column, is_stmt, basic_block, prologue_end, epilogue_begin, isa, discriminator, alloca (sizeof (struct linelist)),	\
 				    end_seq)))				\
 	  goto invalid_data;						\
       } while (0)
-
-      inline bool add_new_line (struct linelist *new_line, bool end_sequence)
-      {
-	/* Set the line information.  For some fields we use bitfields,
-	   so we would lose information if the encoded values are too large.
-	   Check just for paranoia, and call the data "invalid" if it
-	   violates our assumptions on reasonable limits for the values.  */
-#define SET(field)							      \
-	do {								      \
-	  new_line->line.field = field;					      \
-	  if (unlikely (new_line->line.field != field))			      \
-	    return true;						      \
-        } while (0)
-
-	SET (addr);
-	SET (op_index);
-	SET (file);
-	SET (line);
-	SET (column);
-	SET (is_stmt);
-	SET (basic_block);
-	SET (end_sequence);
-	SET (prologue_end);
-	SET (epilogue_begin);
-	SET (isa);
-	SET (discriminator);
-
-#undef SET
-
-	new_line->next = linelist;
-	linelist = new_line;
-	++nlinelist;
-
-	return false;
-      }
 
       while (linep < lineendp)
 	{
@@ -415,7 +417,7 @@ dwarf_getsrclines (Dwarf_Die *cudie, Dwarf_Lines **lines, size_t *nlines)
 
 	      /* Perform the increments.  */
 	      line += line_increment;
-	      advance_pc ((opcode - opcode_base) / line_range);
+	      advance_pc (&addr, minimum_instr_len, &op_index, max_ops_per_instr, (opcode - opcode_base) / line_range);
 
 	      /* Add a new line with the current state machine values.  */
 	      NEW_LINE (0);
@@ -563,7 +565,7 @@ dwarf_getsrclines (Dwarf_Die *cudie, Dwarf_Lines **lines, size_t *nlines)
 		    goto invalid_data;
 
 		  get_uleb128 (u128, linep);
-		  advance_pc (u128);
+		  advance_pc (&addr, minimum_instr_len, &op_index, max_ops_per_instr, u128);
 		  break;
 
 		case DW_LNS_advance_line:
@@ -615,7 +617,7 @@ dwarf_getsrclines (Dwarf_Die *cudie, Dwarf_Lines **lines, size_t *nlines)
 		  if (unlikely (standard_opcode_lengths[opcode] != 0))
 		    goto invalid_data;
 
-		  advance_pc ((255 - opcode_base) / line_range);
+		  advance_pc (&addr, minimum_instr_len, &op_index, max_ops_per_instr, (255 - opcode_base) / line_range);
 		  break;
 
 		case DW_LNS_fixed_advance_pc:

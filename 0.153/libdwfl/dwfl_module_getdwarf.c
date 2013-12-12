@@ -286,6 +286,23 @@ find_debuglink (Elf *elf, GElf_Word *crc)
   return rawdata->d_buf;
 }
 
+  static inline void consider_shdr (GElf_Addr *highest,
+		  		    GElf_Addr interp,
+				    GElf_Word sh_type,
+				    GElf_Xword sh_flags,
+				    GElf_Addr sh_addr,
+		 		    GElf_Xword sh_size)
+  {
+    if ((sh_flags & SHF_ALLOC)
+	&& ((sh_type == SHT_PROGBITS && sh_addr != interp)
+	    || sh_type == SHT_NOBITS))
+      {
+	const GElf_Addr sh_end = sh_addr + sh_size;
+	if (sh_end > *highest)
+	  *highest = sh_end;
+      }
+  }
+
 /* If the main file might have been prelinked, then we need to
    discover the correct synchronization address between the main and
    debug files.  Because of prelink's section juggling, we cannot rely
@@ -425,11 +442,12 @@ find_prelink_address_sync (Dwfl_Module *mod)
   {
     union
     {
-      Elf32_Phdr p32[phnum];
-      Elf64_Phdr p64[phnum];
+      Elf32_Phdr *p32;
+      Elf64_Phdr *p64;
     } phdr;
-    dst.d_buf = &phdr;
-    dst.d_size = sizeof phdr;
+    phdr.p64 = (Elf64_Phdr*)alloca(sizeof(Elf64_Phdr)*phnum);
+    dst.d_buf = phdr.p64;
+    dst.d_size = sizeof(Elf64_Phdr)*phnum;
     if (unlikely (gelf_xlatetom (mod->main.elf, &dst, &src,
 				 ehdr.e32.e_ident[EI_DATA]) == NULL))
       return DWFL_E_LIBELF;
@@ -462,11 +480,12 @@ find_prelink_address_sync (Dwfl_Module *mod)
 
   union
   {
-    Elf32_Shdr s32[shnum - 1];
-    Elf64_Shdr s64[shnum - 1];
+    Elf32_Shdr *s32;
+    Elf64_Shdr *s64;
   } shdr;
-  dst.d_buf = &shdr;
-  dst.d_size = sizeof shdr;
+  shdr.s64 = (Elf64_Shdr*)alloca(sizeof(Elf64_Shdr)*(shnum-1));
+  dst.d_buf = shdr.s64;
+  dst.d_size = sizeof(Elf64_Shdr)*(shnum-1);
   if (unlikely (gelf_xlatetom (mod->main.elf, &dst, &src,
 			       ehdr.e32.e_ident[EI_DATA]) == NULL))
     return DWFL_E_LIBELF;
@@ -489,22 +508,6 @@ find_prelink_address_sync (Dwfl_Module *mod)
 
   GElf_Addr highest;
 
-  inline void consider_shdr (GElf_Addr interp,
-			     GElf_Word sh_type,
-			     GElf_Xword sh_flags,
-			     GElf_Addr sh_addr,
-			     GElf_Xword sh_size)
-  {
-    if ((sh_flags & SHF_ALLOC)
-	&& ((sh_type == SHT_PROGBITS && sh_addr != interp)
-	    || sh_type == SHT_NOBITS))
-      {
-	const GElf_Addr sh_end = sh_addr + sh_size;
-	if (sh_end > highest)
-	  highest = sh_end;
-      }
-  }
-
   highest = 0;
   scn = NULL;
   while ((scn = elf_nextscn (mod->main.elf, scn)) != NULL)
@@ -513,7 +516,7 @@ find_prelink_address_sync (Dwfl_Module *mod)
       GElf_Shdr *sh = gelf_getshdr (scn, &sh_mem);
       if (unlikely (sh == NULL))
 	return DWFL_E_LIBELF;
-      consider_shdr (main_interp, sh->sh_type, sh->sh_flags,
+      consider_shdr (&highest, main_interp, sh->sh_type, sh->sh_flags,
 		     sh->sh_addr, sh->sh_size);
     }
   if (highest > mod->main.vaddr)
@@ -523,11 +526,11 @@ find_prelink_address_sync (Dwfl_Module *mod)
       highest = 0;
       if (ehdr.e32.e_ident[EI_CLASS] == ELFCLASS32)
 	for (size_t i = 0; i < shnum - 1; ++i)
-	  consider_shdr (undo_interp, shdr.s32[i].sh_type, shdr.s32[i].sh_flags,
+	  consider_shdr (&highest, undo_interp, shdr.s32[i].sh_type, shdr.s32[i].sh_flags,
 			 shdr.s32[i].sh_addr, shdr.s32[i].sh_size);
       else
 	for (size_t i = 0; i < shnum - 1; ++i)
-	  consider_shdr (undo_interp, shdr.s64[i].sh_type, shdr.s64[i].sh_flags,
+	  consider_shdr (&highest, undo_interp, shdr.s64[i].sh_type, shdr.s64[i].sh_flags,
 			 shdr.s64[i].sh_addr, shdr.s64[i].sh_size);
 
       if (highest > mod->debug.vaddr)
