@@ -62,7 +62,7 @@
 
 
 /* The error number.  */
-#ifdef __APPLE__
+#if defined(__APPLE__) || (defined(__clang__) && defined(ANDROID))
 static int global_error;
 #else
 static __thread int global_error;
