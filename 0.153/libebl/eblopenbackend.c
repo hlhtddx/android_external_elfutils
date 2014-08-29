@@ -435,7 +435,7 @@ ebl_openbackend (elf)
 /* Find backend without underlying ELF file.  */
 Ebl *
 ebl_openbackend_machine (machine)
-     GElf_Half machine;
+     GElf_Half machine; /* K&R promoted parameter. */
 {
   return openbackend (NULL, NULL, machine);
 }
