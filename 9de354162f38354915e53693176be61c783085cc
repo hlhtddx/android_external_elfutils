@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "13a1690c_6ed0af88",
+        "filename": "0.153/libdw/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2014-08-29T22:35:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d31511f5_da7c05f6",
+      "revId": "9de354162f38354915e53693176be61c783085cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d31511f5_1a215d03",
         "filename": "0.153/libebl/Android.mk",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-08-29T20:58:11Z",
       "side": 1,
       "message": "i don\u0027t think it makes any sense to divide elfutils up like this. it doesn\u0027t help anyone. only perf and ltrace use elfutils, and they need most of the libraries.\n\nwe\u0027re actually fucking this up anyway because libebl tries to dlopen libebl_$(arch), and we\u0027re not building those libraries yet. we get away with it because the caller is useless on the target anyway and picks up the OS\u0027 libraries on the host! but we should fix that, at which point this probably won\u0027t build with clang.",
+      "revId": "9de354162f38354915e53693176be61c783085cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "13a1690c_0ed3eb96",
+        "filename": "0.153/libebl/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2014-08-29T22:35:39Z",
+      "side": 1,
+      "message": "Okay, disabled clang in patch set 3. PTAL.\nThanks.",
+      "parentUuid": "d31511f5_1a215d03",
       "revId": "9de354162f38354915e53693176be61c783085cc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
