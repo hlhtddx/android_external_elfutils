@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b3f97d00_cf7d6df4",
+        "filename": "0.153/libebl/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-08-29T18:11:38Z",
+      "side": 1,
+      "message": "why don\u0027t we just disable clang here too? does anyone use libebl without the others? i thought this was a wrapper for the other libraries and useless without them?",
+      "revId": "91edba988a2000132968040f12250e8c323c78d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d37ef124_9db5e4ce",
+        "filename": "0.153/libebl/eblopenbackend.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-08-29T18:11:38Z",
+      "side": 1,
+      "message": "don\u0027t modify upstream code downstream.",
+      "revId": "91edba988a2000132968040f12250e8c323c78d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
