@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d37ef124_58054a9f",
+        "filename": "0.153/libebl/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2014-08-29T19:26:35Z",
+      "side": 1,
+      "message": "I found some programs like perf linked with this module.\nAlthough it linked with other elfutils modules too, it also linked with other modules that could be compiled by clang. So, I think we will need to find and deal with any binary compatibility issue between clang and gcc anyway. If possible, we should minimize gcc compiled modules in clang compilation mode.\nOf course we can easily set this module to gcc only anytime.",
+      "parentUuid": "b3f97d00_cf7d6df4",
+      "revId": "91edba988a2000132968040f12250e8c323c78d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d37ef124_9db5e4ce",
         "filename": "0.153/libebl/eblopenbackend.c",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-08-29T18:11:38Z",
       "side": 1,
       "message": "don\u0027t modify upstream code downstream.",
+      "revId": "91edba988a2000132968040f12250e8c323c78d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d37ef124_785926be",
+        "filename": "0.153/libebl/eblopenbackend.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2014-08-29T19:26:35Z",
+      "side": 1,
+      "message": "Okay, I will remove it in the next patch set.",
+      "parentUuid": "d37ef124_9db5e4ce",
       "revId": "91edba988a2000132968040f12250e8c323c78d2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
