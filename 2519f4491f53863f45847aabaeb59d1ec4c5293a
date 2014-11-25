@@ -22,6 +22,30 @@
       "revId": "2519f4491f53863f45847aabaeb59d1ec4c5293a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf394503_40588ed1",
+        "filename": "0.153/libdwfl/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2014-11-25T18:12:59Z",
+      "side": 1,
+      "message": "This must be a recent change in the filter rules, as I know I hit this not too long ago. If it\u0027s correctly filtered I\u0027m OK with removing the conditional.",
+      "parentUuid": "1fcc1153_ffefc7c1",
+      "range": {
+        "startLine": 76,
+        "startChar": 6,
+        "endLine": 76,
+        "endChar": 9
+      },
+      "revId": "2519f4491f53863f45847aabaeb59d1ec4c5293a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
