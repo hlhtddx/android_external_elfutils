@@ -71,6 +71,12 @@ LOCAL_CFLAGS += -Wno-pointer-arith
 # to fix machine-dependent issues
 LOCAL_CFLAGS += -include $(LOCAL_PATH)/../host-$(HOST_OS)-fixup/AndroidFixup.h
 
+# Asserts are not compiled, so some debug variables appear unused. Rather than
+# fix, we prefer to turn off the warning locally.
+ifneq ($(LOCAL_CLANG),true)
+  LOCAL_CFLAGS += -Wno-unused-but-set-variable
+endif
+
 LOCAL_MODULE:= libdwfl
 
 include $(BUILD_HOST_STATIC_LIBRARY)
@@ -104,6 +110,11 @@ LOCAL_CFLAGS += -DHAVE_CONFIG_H -std=gnu99 -Werror
 
 # to suppress the "pointer of type ‘void *’ used in arithmetic" warning
 LOCAL_CFLAGS += -Wno-pointer-arith
+
+# See above.
+ifneq ($(LOCAL_CLANG),true)
+  LOCAL_CFLAGS += -Wno-unused-but-set-variable
+endif
 
 LOCAL_MODULE:= libdwfl
 
