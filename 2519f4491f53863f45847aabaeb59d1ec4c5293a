@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fcc1153_ffefc7c1",
+        "filename": "0.153/libdwfl/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2014-11-25T17:53:30Z",
+      "side": 1,
+      "message": "I think we can just remove the condition related to LOCAL_CLANG.\n* elfutils is unlikely to be compiled by Clang in the near future, due to missing support of nested functions.\n* If it can be compiled by both Clang and gcc, we might not define LOCAL_CLANG to true or false at all. So condition on it is unreliable.\n* no-unused-but-set-variable is now a gcc flag and is explicitly filtered out in build/core/clang/config.mk. So it should be okay to add this flag to LOCAL_CFLAGS unconditionally.\nOn the other hand, I hope this is not going to trigger too many warngins and changes in the external source.",
+      "range": {
+        "startLine": 76,
+        "startChar": 6,
+        "endLine": 76,
+        "endChar": 9
+      },
+      "revId": "2519f4491f53863f45847aabaeb59d1ec4c5293a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
