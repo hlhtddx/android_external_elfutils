@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "883ff2b4_93c21eb7",
+        "filename": "bionic-fixup/argp.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1019050
+      },
+      "writtenOn": "2015-02-19T06:32:13Z",
+      "side": 1,
+      "message": "I don\u0027t think this applies since this isn\u0027t blank.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 25
+      },
+      "revId": "a4d1e29bbc405b92b78595a0383a944faab282b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
