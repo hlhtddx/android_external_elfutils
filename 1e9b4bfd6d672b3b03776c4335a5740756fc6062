@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e5fa128_8ca0b597",
+        "filename": "libdwfl/linux-kernel-modules.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-09-29T20:35:44Z",
+      "side": 1,
+      "message": "you shouldn\u0027t need this any more. i killed AndroidConfig.h a while ago.",
+      "revId": "1e9b4bfd6d672b3b03776c4335a5740756fc6062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
