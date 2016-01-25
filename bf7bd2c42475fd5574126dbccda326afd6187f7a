@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b4b51eae_d257514e",
+        "filename": "libelf/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2016-01-25T18:57:34Z",
+      "side": 1,
+      "message": "maybe use \"LOCAL_STATIC_LIBRARIES :\u003d\" instead? I thought it implied neccessary includes",
+      "revId": "bf7bd2c42475fd5574126dbccda326afd6187f7a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
