@@ -16,6 +16,24 @@
       "revId": "bf7bd2c42475fd5574126dbccda326afd6187f7a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "94b81aa8_219782be",
+        "filename": "libelf/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2016-01-25T19:23:22Z",
+      "side": 1,
+      "message": "yeah, that seems weird that this would need the headers but not the library?",
+      "parentUuid": "b4b51eae_d257514e",
+      "revId": "bf7bd2c42475fd5574126dbccda326afd6187f7a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
