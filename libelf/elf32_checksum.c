@@ -47,7 +47,7 @@
 
 
 #define process_block(crc, data) \
-  __libelf_crc32 (crc, data->d_buf, data->d_size)
+  __libelf_crc32 (crc, (data)->d_buf, (data)->d_size)
 
 
 long int

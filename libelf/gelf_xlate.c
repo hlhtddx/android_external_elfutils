@@ -64,8 +64,8 @@ static void
 
 #if ALLOW_UNALIGNED
 
-#define FETCH(Bits, ptr)	(*(const uint##Bits##_t *) ptr)
-#define STORE(Bits, ptr, val)	(*(uint##Bits##_t *) ptr = val)
+#define FETCH(Bits, ptr)	(*(const uint##Bits##_t *) (ptr))
+#define STORE(Bits, ptr, val)	(*(uint##Bits##_t *) (ptr) = (val))
 
 #else
 
@@ -112,8 +112,8 @@ union unaligned
       while (n-- > 0)							      \
 	{								      \
 	  FName##1 (dest, ptr);						      \
-	  dest += Bytes;						      \
-	  ptr += Bytes;							      \
+	  dest += (Bytes);						      \
+	  ptr += (Bytes);						      \
 	}								      \
     else								      \
       {									      \
@@ -121,8 +121,8 @@ union unaligned
 	ptr += len;							      \
 	while (n-- > 0)							      \
 	  {								      \
-	    ptr -= Bytes;						      \
-	    dest -= Bytes;						      \
+	    ptr -= (Bytes);						      \
+	    dest -= (Bytes);						      \
 	    FName##1 (dest, ptr);					      \
 	  }								      \
       }									      \

@@ -43,10 +43,10 @@
 
 
 #define TYPEIDX(Sh_Type) \
-  (Sh_Type >= SHT_NULL && Sh_Type < SHT_NUM				      \
-   ? Sh_Type								      \
-   : (Sh_Type >= SHT_GNU_HASH && Sh_Type <= SHT_HISUNW			      \
-      ? SHT_NUM + Sh_Type - SHT_GNU_HASH				      \
+  ((Sh_Type) >= SHT_NULL && (Sh_Type) < SHT_NUM				      \
+   ? (Sh_Type)								      \
+   : ((Sh_Type) >= SHT_GNU_HASH && (Sh_Type) <= SHT_HISUNW		      \
+      ? SHT_NUM + (Sh_Type) - SHT_GNU_HASH				      \
       : 0))
 
 /* Associate section types with libelf types.  */

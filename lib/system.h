@@ -64,7 +64,7 @@ extern int crc32_file (int fd, uint32_t *resp);
 /* A special gettext function we use if the strings are too short.  */
 #define sgettext(Str) \
   ({ const char *__res = strrchr (gettext (Str), '|');			      \
-     __res ? __res + 1 : Str; })
+     __res ? __res + 1 : (Str); })
 
 #define gettext_noop(Str) Str
 

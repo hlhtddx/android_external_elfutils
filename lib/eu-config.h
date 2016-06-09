@@ -57,7 +57,7 @@
 
 /* Compiler-specific definitions.  */
 #define strong_alias(name, aliasname) \
-  extern __typeof (name) aliasname __attribute__ ((alias (#name)));
+  extern __typeof (name) (aliasname) __attribute__ ((alias (#name)));
 
 #ifdef __i386__
 # define internal_function __attribute__ ((regparm (3), stdcall))
@@ -66,7 +66,7 @@
 #endif
 
 #define internal_strong_alias(name, aliasname) \
-  extern __typeof (name) aliasname __attribute__ ((alias (#name))) internal_function;
+  extern __typeof (name) (aliasname) __attribute__ ((alias (#name))) internal_function;
 
 #define attribute_hidden \
   __attribute__ ((visibility ("hidden")))

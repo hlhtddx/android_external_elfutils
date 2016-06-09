@@ -421,7 +421,7 @@ extern const size_t __libelf_type_sizes[EV_NUM - 1][ELFCLASSNUM - 1][ELF_T_NUM] 
   elfw2(class,fsize) (type, n, __libelf_version)
 #else
 # define elf_typesize(class,type,n) \
-  (__libelf_type_sizes[EV_CURRENT - 1][ELFW(ELFCLASS,class) - 1][type] * n)
+  (__libelf_type_sizes[EV_CURRENT - 1][ELFW(ELFCLASS,class) - 1][type] * (n))
 #endif
 
 /* Currently selected version of the ELF specification.  */

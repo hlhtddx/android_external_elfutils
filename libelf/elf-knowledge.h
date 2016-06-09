@@ -41,10 +41,10 @@
    && (shdr)->sh_type != SHT_NOTE					      \
    && (((shdr)->sh_type) != SHT_PROGBITS				      \
        /* Never remove .gnu.warning.* sections.  */			      \
-       || (name != NULL							      \
+       || ((name) != NULL							      \
 	   && strncmp (name, ".gnu.warning.", sizeof ".gnu.warning." - 1) != 0\
 	   /* We remove .comment sections only if explicitly told to do so. */\
-	   && (remove_comment						      \
+	   && ((remove_comment)						      \
 	       || strcmp (name, ".comment") != 0))))
 
 
@@ -73,10 +73,10 @@
    The following definition is for the general case.  There might be
    machine specific extensions.  */
 #define SH_FLAGS_COMBINE(Flags1, Flags2) \
-  (((Flags1 | Flags2)							      \
+  ((((Flags1) | (Flags2))							      \
     & (SHF_WRITE | SHF_ALLOC | SHF_EXECINSTR | SHF_LINK_ORDER		      \
        | SHF_OS_NONCONFORMING | SHF_GROUP))				      \
-   | (Flags1 & Flags2 & (SHF_MERGE | SHF_STRINGS | SHF_INFO_LINK)))
+   | ((Flags1) & (Flags2) & (SHF_MERGE | SHF_STRINGS | SHF_INFO_LINK)))
 
 /* Similar macro: return the bits of the flags which necessarily must
    match if two sections are automatically combined.  Sections still
