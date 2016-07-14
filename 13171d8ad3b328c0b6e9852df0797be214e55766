@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a0f7c78_9ef13a71",
+        "filename": "libelf/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-07-14T05:44:32Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 156,
+        "startChar": 0,
+        "endLine": 157,
+        "endChar": 10
+      },
+      "revId": "13171d8ad3b328c0b6e9852df0797be214e55766",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
