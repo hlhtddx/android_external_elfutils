@@ -14,7 +14,8 @@
 
 cc_library_static {
     name: "libelf",
-    host_supported: true,
+
+    defaults: ["elfutils-defaults"],
 
     srcs:  [
         "elf32_checksum.c",
@@ -47,6 +48,7 @@ cc_library_static {
         "elf_clone.c",
         "elf_cntl.c",
         "elf_compress.c",
+        "elf_compress_gnu.c",
         "elf_end.c",
         "elf_error.c",
         "elf_fill.c",
@@ -134,30 +136,10 @@ cc_library_static {
         "nlist.c",
     ],
 
-    cflags: [
-        "-DHAVE_CONFIG_H",
-        "-std=gnu99",
-        "-D_GNU_SOURCE",
-        // to suppress the "pointer of type ‘void *’ used in arithmetic" warning
-        "-Wno-pointer-arith",
-    ],
-
     static_libs: [
         "libz",
         "libelf_headers",
     ],
 
     export_include_dirs: ["."],
-
-    target: {
-        darwin: {
-            enabled: false,
-        },
-        android: {
-            cflags: [
-                "-D_FILE_OFFSET_BITS=64",
-                "-include AndroidFixup.h",
-            ],
-        },
-    },
 }

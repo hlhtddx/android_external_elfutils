@@ -29,7 +29,7 @@
 #ifndef _LIBDWELFP_H
 #define _LIBDWELFP_H	1
 
-#include <libdwelf.h>
+#include "libdwelf.h"
 #include "../libdw/libdwP.h"	/* We need its INTDECLs.  */
 #include <assert.h>
 #include <string.h>

@@ -1,0 +1,68 @@
+// Copyright (C) 2013 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+cc_library_static {
+    name: "libasm_headers",
+    host_supported: true,
+    export_include_dirs: ["."],
+}
+
+cc_library_static {
+    name: "libasm",
+
+    defaults: ["elfutils-defaults"],
+
+    srcs: [
+        "asm_begin.c",
+        "asm_abort.c",
+        "asm_end.c",
+        "asm_error.c",
+        "asm_getelf.c",
+        "asm_newscn.c",
+        "asm_newscn_ingrp.c",
+        "asm_newsubscn.c",
+        "asm_newsym.c",
+        "asm_newcomsym.c",
+        "asm_newabssym.c",
+        "asm_newscngrp.c",
+        "asm_scngrp_newsignature.c",
+        "asm_fill.c",
+        "asm_align.c",
+        "asm_addstrz.c",
+        "asm_addint8.c",
+        "asm_adduint8.c",
+        "asm_addint16.c",
+        "asm_adduint16.c",
+        "asm_addint32.c",
+        "asm_adduint32.c",
+        "asm_addint64.c",
+        "asm_adduint64.c",
+        "asm_adduleb128.c",
+        "asm_addsleb128.c",
+        "disasm_begin.c",
+        "disasm_cb.c",
+        "disasm_end.c",
+        "disasm_str.c",
+        "symbolhash.c",
+    ],
+
+    static_libs: [
+        "libelf_headers",
+        "libelf",
+        "libdw_headers",
+        "libebl_headers",
+    ],
+
+    export_include_dirs: ["."],
+}

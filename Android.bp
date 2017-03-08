@@ -1,3 +1,30 @@
+cc_defaults {
+    name: "elfutils-defaults",
+
+    host_supported: true,
+
+    target: {
+        darwin: {
+            enabled: false,
+        },
+        android: {
+            cflags: [
+                "-D_FILE_OFFSET_BITS=64",
+                "-include AndroidFixup.h",
+            ],
+        },
+    },
+
+    cflags: [
+        "-DHAVE_CONFIG_H",
+        "-std=gnu99",
+        "-D_GNU_SOURCE",
+        // to suppress the "pointer of type ‘void *’ used in arithmetic" warning
+        "-Wno-pointer-arith",
+        "-Wno-implicit-function-declaration",
+    ],
+}
+
 cc_library_static {
     name: "libelf_headers",
     host_supported: true,
@@ -12,4 +39,11 @@ cc_library_static {
     },
 }
 
-subdirs = ["libelf"]
+subdirs = [
+    "libasm",
+    "libdw",
+    "libdwelf",
+    "libdwfl",
+    "libebl",
+    "libelf",
+]
