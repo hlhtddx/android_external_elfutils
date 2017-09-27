@@ -139,6 +139,7 @@ cc_library_static {
         "-std=gnu99",
         "-D_GNU_SOURCE",
         // to suppress the "pointer of type ‘void *’ used in arithmetic" warning
+        "-Werror",
         "-Wno-pointer-arith",
     ],
 
