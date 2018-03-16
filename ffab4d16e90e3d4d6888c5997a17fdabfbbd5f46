@@ -1,0 +1,8 @@
+Code-Review+2: Hung-ying Tyan <tyanh@google.com>
+Presubmit-Verified+1: Treehugger Robot <treehugger-gerrit@google.com>
+Verified+1: Logan Chien <loganchien@google.com>
+Submitted-by: Logan Chien <loganchien@google.com>
+Submitted-at: Fri, 16 Mar 2018 01:58:06 +0000
+Reviewed-on: https://android-review.googlesource.com/636219
+Project: platform/external/elfutils
+Branch: refs/heads/master
